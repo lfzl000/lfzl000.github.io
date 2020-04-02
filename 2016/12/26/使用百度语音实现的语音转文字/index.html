@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+
+  
+  <title>使用百度语音实现的语音转文字 | 赵亮的博客</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="在VR场景中我想把语音转为文字，使用起来更高大上一点儿，于是，我翻遍了目前用的比较多的集中SDK：科大讯飞，百度语音，微软TTS，亲加通讯 其中，亲加通讯和百度的SDK主要是面对移动端，TTS主要面对Windows，科大讯飞移动端桌面端都有。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="使用百度语音实现的语音转文字">
+<meta property="og:url" content="http://yoursite.com/2016/12/26/%E4%BD%BF%E7%94%A8%E7%99%BE%E5%BA%A6%E8%AF%AD%E9%9F%B3%E5%AE%9E%E7%8E%B0%E7%9A%84%E8%AF%AD%E9%9F%B3%E8%BD%AC%E6%96%87%E5%AD%97/index.html">
+<meta property="og:site_name" content="赵亮的博客">
+<meta property="og:description" content="在VR场景中我想把语音转为文字，使用起来更高大上一点儿，于是，我翻遍了目前用的比较多的集中SDK：科大讯飞，百度语音，微软TTS，亲加通讯 其中，亲加通讯和百度的SDK主要是面对移动端，TTS主要面对Windows，科大讯飞移动端桌面端都有。">
+<meta property="article:published_time" content="2016-12-26T02:59:05.000Z">
+<meta property="article:modified_time" content="2020-04-02T04:28:37.131Z">
+<meta property="article:author" content="Zhao Liang">
+<meta property="article:tag" content="unity">
+<meta property="article:tag" content="语音转文字">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="赵亮的博客" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">赵亮的博客</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yoursite.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-使用百度语音实现的语音转文字" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2016/12/26/%E4%BD%BF%E7%94%A8%E7%99%BE%E5%BA%A6%E8%AF%AD%E9%9F%B3%E5%AE%9E%E7%8E%B0%E7%9A%84%E8%AF%AD%E9%9F%B3%E8%BD%AC%E6%96%87%E5%AD%97/" class="article-date">
+  <time datetime="2016-12-26T02:59:05.000Z" itemprop="datePublished">2016-12-26</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E6%8A%80%E6%9C%AF%E5%88%86%E4%BA%AB/">技术分享</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      使用百度语音实现的语音转文字
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>在VR场景中我想把语音转为文字，使用起来更高大上一点儿，于是，我翻遍了目前用的比较多的集中SDK：科大讯飞，百度语音，微软TTS，亲加通讯</p>
+<p>其中，亲加通讯和百度的SDK主要是面对移动端，TTS主要面对Windows，科大讯飞移动端桌面端都有。</p>
+<a id="more"></a>
+<p>我是想用到Oculus中的，所以要选用windows，然后困难就来了。。</p>
+<p>讯飞的桌面SDK是用C语言写的，想用到unity里面对于我这种一点儿C都不会的太难了，TTS没怎么研究，但是感觉蛮复杂的，然后经过我百般摸索，发现百度语音不光有移动端，还有REST，使用HTTP请求来使用的，不限平台！</p>
+<p>于是，我就决定采用百度的REST方式来实现语音转为文字。</p>
+<p>这个是<a href="http://yuyin.baidu.com/docs/asr/57" target="_blank" rel="noopener">使用文档</a> 自己看一下，下面我们直接上代码</p>
+<p>在unity中新建一个脚本</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">string</span> token;                           <span class="comment">//access_token</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">string</span> cuid = <span class="string">"你自己随便写一个用户标识"</span>;        <span class="comment">//用户标识</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">string</span> format = <span class="string">"wav"</span>;                  <span class="comment">//语音格式</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">int</span> rate = <span class="number">8000</span>;                        <span class="comment">//采样率</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">int</span> channel = <span class="number">1</span>;                        <span class="comment">//声道数</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">string</span> speech;                          <span class="comment">//语音数据，进行base64编码</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">int</span> len;                                <span class="comment">//原始语音长度</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">string</span> lan = <span class="string">"zh"</span>;                      <span class="comment">//语种</span></span><br><span class="line"> </span><br><span class="line"><span class="keyword">private</span> <span class="keyword">string</span> grant_Type = <span class="string">"client_credentials"</span>;  </span><br><span class="line"><span class="keyword">private</span> <span class="keyword">string</span> client_ID = <span class="string">"你的百度appkey"</span>;                       <span class="comment">//百度appkey</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">string</span> client_Secret = <span class="string">"你的百度SecretKey"</span>;                   <span class="comment">//百度Secret Key</span></span><br><span class="line"> </span><br><span class="line"><span class="keyword">private</span> <span class="keyword">string</span> baiduAPI = <span class="string">"http://vop.baidu.com/server_api"</span>;</span><br><span class="line"><span class="keyword">private</span> <span class="keyword">string</span> getTokenAPIPath = <span class="string">"https://openapi.baidu.com/oauth/2.0/token"</span>;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">private</span> Byte[] clipByte;</span><br><span class="line"> </span><br><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span></span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> 转换出来的TEXT</span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">string</span> audioToString;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">private</span> AudioSource aud;</span><br><span class="line"><span class="keyword">private</span> <span class="keyword">int</span> audioLength;<span class="comment">//录音的长度</span></span><br></pre></td></tr></table></figure>
+<p>以上是需要声明的变量。其中AppID和SecretKey需要你注册成为百度的开发者，然后再应用管理中去看<br>继续代码：</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span></span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> 获取百度用户令牌</span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;param name="url"&gt;</span>获取的url<span class="doctag">&lt;/param&gt;</span></span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;returns&gt;</span><span class="doctag">&lt;/returns&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">private</span> IEnumerator <span class="title">GetToken</span>(<span class="params"><span class="keyword">string</span> url</span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    WWWForm getTForm = <span class="keyword">new</span> WWWForm();</span><br><span class="line">    getTForm.AddField(<span class="string">"grant_type"</span>, grant_Type);</span><br><span class="line">    getTForm.AddField(<span class="string">"client_id"</span>, client_ID);</span><br><span class="line">    getTForm.AddField(<span class="string">"client_secret"</span>, client_Secret);</span><br><span class="line"> </span><br><span class="line">    WWW getTW = <span class="keyword">new</span> WWW(url, getTForm);</span><br><span class="line">    <span class="keyword">yield</span> <span class="keyword">return</span> getTW;</span><br><span class="line">    <span class="keyword">if</span> (getTW.isDone)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">if</span> (getTW.error == <span class="literal">null</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            token = JsonMapper.ToObject(getTW.text)[<span class="string">"access_token"</span>].ToString();</span><br><span class="line">            StartCoroutine(GetAudioString(baiduAPI));</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">            Debug.LogError(getTW.error);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面这段代码是获取百度的Token，有Token才有权使用API。</p>
+<p>然后是发送转换请求的方法：</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span></span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> 把语音转换为文字</span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;param name="url"&gt;</span><span class="doctag">&lt;/param&gt;</span></span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;returns&gt;</span><span class="doctag">&lt;/returns&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">private</span> IEnumerator <span class="title">GetAudioString</span>(<span class="params"><span class="keyword">string</span> url</span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    JsonWriter jw = <span class="keyword">new</span> JsonWriter();</span><br><span class="line">    jw.WriteObjectStart();</span><br><span class="line">    jw.WritePropertyName(<span class="string">"format"</span>);</span><br><span class="line">    jw.Write(format);</span><br><span class="line">    jw.WritePropertyName(<span class="string">"rate"</span>);</span><br><span class="line">    jw.Write(rate);</span><br><span class="line">    jw.WritePropertyName(<span class="string">"channel"</span>);</span><br><span class="line">    jw.Write(channel);</span><br><span class="line">    jw.WritePropertyName(<span class="string">"token"</span>);</span><br><span class="line">    jw.Write(token);</span><br><span class="line">    jw.WritePropertyName(<span class="string">"cuid"</span>);</span><br><span class="line">    jw.Write(cuid);</span><br><span class="line">    jw.WritePropertyName(<span class="string">"len"</span>);</span><br><span class="line">    jw.Write(len);</span><br><span class="line">    jw.WritePropertyName(<span class="string">"speech"</span>);</span><br><span class="line">    jw.Write(speech);</span><br><span class="line">    jw.WriteObjectEnd();</span><br><span class="line"> </span><br><span class="line">    WWW getASW = <span class="keyword">new</span> WWW(url, Encoding.Default.GetBytes(jw.ToString()));</span><br><span class="line">    <span class="keyword">yield</span> <span class="keyword">return</span> getASW;</span><br><span class="line">    <span class="keyword">if</span> (getASW.isDone)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">if</span> (getASW.error == <span class="literal">null</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            JsonData getASWJson = JsonMapper.ToObject(getASW.text);</span><br><span class="line">            <span class="keyword">if</span> (getASWJson[<span class="string">"err_msg"</span>].ToString() == <span class="string">"success."</span>)</span><br><span class="line">            &#123;</span><br><span class="line">                audioToString = getASWJson[<span class="string">"result"</span>][<span class="number">0</span>].ToString();</span><br><span class="line">                <span class="keyword">if</span> (audioToString.Substring(audioToString.Length - <span class="number">1</span>) == <span class="string">"，"</span>)</span><br><span class="line">                    audioToString = audioToString.Substring(<span class="number">0</span>, audioToString.Length - <span class="number">1</span>);</span><br><span class="line">                Debug.Log(audioToString);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">        &#123;</span><br><span class="line">            Debug.LogError(getASW.error);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>注意，这里不能用WWWForm的AddField方法去上传参数，否则会返回错误3300，也就是参数错误，我就是在这卡住了很长时间。。</p>
+<p>好了，现在就可以把一段语音转换成文字然后返回到audioToString这个字符串了</p>
+<p>然后是用unity录音,这个脚本在之前的文章中写过，下面在写一遍</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">Awake</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (GetComponent&lt;AudioSource&gt;() == <span class="literal">null</span>)</span><br><span class="line">        aud = gameObject.AddComponent&lt;AudioSource&gt;();</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">        aud = gameObject.GetComponent&lt;AudioSource&gt;();</span><br><span class="line">    aud.playOnAwake = <span class="literal">false</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span></span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> 开始录音</span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">StartMic</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (Microphone.devices.Length == <span class="number">0</span>) <span class="keyword">return</span>;</span><br><span class="line">    Microphone.End(<span class="literal">null</span>);</span><br><span class="line">    Debug.Log(<span class="string">"Start"</span>);</span><br><span class="line">    aud.clip = Microphone.Start(<span class="literal">null</span>, <span class="literal">false</span>, <span class="number">10</span>, rate);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span></span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> 结束录音</span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">EndMic</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> lastPos = Microphone.GetPosition(<span class="literal">null</span>);</span><br><span class="line">    <span class="keyword">if</span> (Microphone.IsRecording(<span class="literal">null</span>))</span><br><span class="line">        audioLength = lastPos / rate;<span class="comment">//录音时长  </span></span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">        audioLength = <span class="number">10</span>;</span><br><span class="line">    Debug.Log(<span class="string">"Stop"</span>);</span><br><span class="line">    Microphone.End(<span class="literal">null</span>);</span><br><span class="line"> </span><br><span class="line">    clipByte = GetClipData();</span><br><span class="line">    len = clipByte.Length;</span><br><span class="line">    speech = Convert.ToBase64String(clipByte);</span><br><span class="line">    StartCoroutine(GetToken(getTokenAPIPath));</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span></span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> 把录音转换为Byte[]</span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;returns&gt;</span><span class="doctag">&lt;/returns&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> Byte[] <span class="title">GetClipData</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (aud.clip == <span class="literal">null</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        Debug.LogError(<span class="string">"录音数据为空"</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">float</span>[] samples = <span class="keyword">new</span> <span class="keyword">float</span>[aud.clip.samples];</span><br><span class="line"> </span><br><span class="line">    aud.clip.GetData(samples, <span class="number">0</span>);</span><br><span class="line"> </span><br><span class="line">    Byte[] outData = <span class="keyword">new</span> <span class="keyword">byte</span>[samples.Length * <span class="number">2</span>];</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">int</span> rescaleFactor = <span class="number">32767</span>; <span class="comment">//to convert float to Int16   </span></span><br><span class="line"> </span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; samples.Length; i++)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">short</span> temshort = (<span class="keyword">short</span>)(samples[i] * rescaleFactor);</span><br><span class="line"> </span><br><span class="line">        Byte[] temdata = System.BitConverter.GetBytes(temshort);</span><br><span class="line"> </span><br><span class="line">        outData[i * <span class="number">2</span>] = temdata[<span class="number">0</span>];</span><br><span class="line">        outData[i * <span class="number">2</span> + <span class="number">1</span>] = temdata[<span class="number">1</span>];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (outData == <span class="literal">null</span> || outData.Length &lt;= <span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        Debug.LogError(<span class="string">"录音数据为空"</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">return</span> outData;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>然后再添加一下测试的代码：</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">OnGUI</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (GUILayout.Button(<span class="string">"Start"</span>))</span><br><span class="line">        StartMic();</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">if</span> (GUILayout.Button(<span class="string">"End"</span>))</span><br><span class="line">        EndMic();</span><br><span class="line"> </span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">public</span> Text debugText;</span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">Update</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    debugText.text = audioToString;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>整个脚本就完成了，然后把脚本挂到场景中一个物体上，再建一个Text,拖到debugText上，运行起来，点Start，说一句话，说完再点End，就会把说的话转成语音输出到debugText上</p>
+<p>我觉得这个方法还是比较简单的，只是必须要联网才行，不过我们这个程序是要登陆注册才能进去的，所以不存在不联网的问题，大家可以参考参考，有好的意见可以提出来共同提高</p>
+<p><a href="https://github.com/lfzl000/VoiceToString.git" target="_blank" rel="noopener">工程Demo地址请点这里</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2016/12/26/%E4%BD%BF%E7%94%A8%E7%99%BE%E5%BA%A6%E8%AF%AD%E9%9F%B3%E5%AE%9E%E7%8E%B0%E7%9A%84%E8%AF%AD%E9%9F%B3%E8%BD%AC%E6%96%87%E5%AD%97/" data-id="ck8ih54h80005rgt1fepi6y7g" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/unity/" rel="tag">unity</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%AF%AD%E9%9F%B3%E8%BD%AC%E6%96%87%E5%AD%97/" rel="tag">语音转文字</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2017/05/15/unity2017%E5%BC%80%E5%8F%91%E8%80%85%E5%A4%A7%E4%BC%9A%E8%AE%B0%E5%BD%95/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          unity2017开发者大会记录
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2016/11/20/Markdown%E8%AF%AD%E6%B3%95/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Markdown语法</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%8A%80%E6%9C%AF%E5%88%86%E4%BA%AB/">技术分享</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%94%9F%E6%B4%BB%E8%AE%B0%E5%BD%95/">生活记录</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/MarkDown/" rel="tag">MarkDown</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hexo/" rel="tag">hexo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/lua/" rel="tag">lua</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/unity/" rel="tag">unity</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%A4%87%E4%BB%BD/" rel="tag">备份</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AF%AD%E9%9F%B3%E8%BD%AC%E6%96%87%E5%AD%97/" rel="tag">语音转文字</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/MarkDown/" style="font-size: 10px;">MarkDown</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/lua/" style="font-size: 10px;">lua</a> <a href="/tags/unity/" style="font-size: 20px;">unity</a> <a href="/tags/%E5%A4%87%E4%BB%BD/" style="font-size: 10px;">备份</a> <a href="/tags/%E8%AF%AD%E9%9F%B3%E8%BD%AC%E6%96%87%E5%AD%97/" style="font-size: 10px;">语音转文字</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/04/">April 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">May 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">December 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">November 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">July 2016</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2020/04/02/hello-world/">Hello World</a>
+          </li>
+        
+          <li>
+            <a href="/2020/04/01/unity%20vscode+luaide_lite%E4%BD%BF%E7%94%A8/">unity vscode+luaide_lite使用</a>
+          </li>
+        
+          <li>
+            <a href="/2017/05/15/unity2017%E5%BC%80%E5%8F%91%E8%80%85%E5%A4%A7%E4%BC%9A%E8%AE%B0%E5%BD%95/">unity2017开发者大会记录</a>
+          </li>
+        
+          <li>
+            <a href="/2016/12/26/%E4%BD%BF%E7%94%A8%E7%99%BE%E5%BA%A6%E8%AF%AD%E9%9F%B3%E5%AE%9E%E7%8E%B0%E7%9A%84%E8%AF%AD%E9%9F%B3%E8%BD%AC%E6%96%87%E5%AD%97/">使用百度语音实现的语音转文字</a>
+          </li>
+        
+          <li>
+            <a href="/2016/11/20/Markdown%E8%AF%AD%E6%B3%95/">Markdown语法</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2020 Zhao Liang<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+
+  
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+  </div>
+</body>
+</html>
